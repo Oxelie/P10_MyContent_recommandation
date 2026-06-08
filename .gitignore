@@ -1,0 +1,8 @@
+news-portal-user-interactions-by-globocom/
+*.pickle
+*.zip
+.DS_Store
+.lh/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
