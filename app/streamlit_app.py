@@ -24,6 +24,18 @@ def load_user_ids() -> list[int]:
     return sorted(list(user_to_index.keys()))[:200]
 
 
+@st.cache_data
+def load_articles_metadata() -> pd.DataFrame:
+    """Load articles metadata and format publication date.
+
+    Returns:
+        DataFrame with article_id as index and metadata columns.
+    """
+    metadata = pd.read_csv(os.path.join(DATA_DIR, "articles_metadata.csv"))
+    metadata["created_at"] = pd.to_datetime(metadata["created_at_ts"], unit="ms").dt.strftime("%d/%m/%Y")
+    return metadata.set_index("article_id")
+
+
 def get_recommendations(user_id: int) -> list[int] | None:
     """Call the Azure Function to get article recommendations for a user.
 
@@ -53,6 +65,7 @@ st.markdown("Sélectionnez un utilisateur pour obtenir ses 5 articles recommand�
 st.divider()
 
 user_ids = load_user_ids()
+articles_metadata = load_articles_metadata()
 
 selected_user_id = st.selectbox(
     label="Identifiant utilisateur",
@@ -67,4 +80,13 @@ if st.button("Obtenir les recommandations", type="primary"):
     if recommendations is not None:
         st.success(f"Top 5 articles recommandés pour l'utilisateur **{selected_user_id}** :")
         for rank, article_id in enumerate(recommendations, start=1):
-            st.markdown(f"**{rank}.** Article `{article_id}`")
+            if article_id in articles_metadata.index:
+                row = articles_metadata.loc[article_id]
+                st.markdown(
+                    f"**{rank}.** Article `{article_id}` — "
+                    f"Catégorie `{int(row['category_id'])}` · "
+                    f"{int(row['words_count'])} mots · "
+                    f"Publié le {row['created_at']}"
+                )
+            else:
+                st.markdown(f"**{rank}.** Article `{article_id}`")
