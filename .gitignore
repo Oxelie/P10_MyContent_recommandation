@@ -2,6 +2,7 @@ news-portal-user-interactions-by-globocom/
 *.pickle
 *.zip
 env_p10_chantepie/
+model_artifacts/
 .DS_Store
 .lh/
 __pycache__/
