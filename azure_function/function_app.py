@@ -1,24 +1,52 @@
 """Azure Function for article recommendations using ALS collaborative filtering."""
 
+import io
 import json
 import logging
 import os
 import joblib
 import azure.functions as func
+from azure.storage.blob import BlobServiceClient
 
 app = func.FunctionApp()
 
-# Chemins vers les artifacts (relatifs au dossier de la fonction)
-ARTIFACTS_DIR = os.path.join(os.path.dirname(__file__), "..", "model_artifacts")
+CONTAINER_NAME = "artifacts"
+ARTIFACT_NAMES = [
+    "als_model.pkl",
+    "user_item_matrix.pkl",
+    "user_to_index.pkl",
+    "index_to_article.pkl",
+    "fallback_articles.pkl",
+]
 
-# Chargement des artifacts au démarrage (une seule fois, pas à chaque appel)
-logging.info("Chargement des artifacts...")
-model = joblib.load(os.path.join(ARTIFACTS_DIR, "als_model.pkl"))
-user_item_matrix = joblib.load(os.path.join(ARTIFACTS_DIR, "user_item_matrix.pkl"))
-user_to_index = joblib.load(os.path.join(ARTIFACTS_DIR, "user_to_index.pkl"))
-index_to_article = joblib.load(os.path.join(ARTIFACTS_DIR, "index_to_article.pkl"))
-fallback_articles = joblib.load(os.path.join(ARTIFACTS_DIR, "fallback_articles.pkl"))
-logging.info("Artifacts chargés.")
+
+def _load_artifact_from_blob(blob_client, name: str):
+    """Download a joblib artifact from Azure Blob Storage into memory.
+
+    Args:
+        blob_client: Azure BlobServiceClient instance.
+        name: Blob filename to download.
+
+    Returns:
+        Deserialized Python object.
+    """
+    blob = blob_client.get_blob_client(container=CONTAINER_NAME, blob=name)
+    buffer = io.BytesIO(blob.download_blob().readall())
+    return joblib.load(buffer)
+
+
+logging.info("Connexion au Blob Storage et chargement des artifacts...")
+
+_connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
+_blob_service = BlobServiceClient.from_connection_string(_connection_string)
+
+model = _load_artifact_from_blob(_blob_service, "als_model.pkl")
+user_item_matrix = _load_artifact_from_blob(_blob_service, "user_item_matrix.pkl")
+user_to_index = _load_artifact_from_blob(_blob_service, "user_to_index.pkl")
+index_to_article = _load_artifact_from_blob(_blob_service, "index_to_article.pkl")
+fallback_articles = _load_artifact_from_blob(_blob_service, "fallback_articles.pkl")
+
+logging.info("Artifacts chargés depuis Azure Blob Storage.")
 
 
 def recommend_for_user(user_id: int, top_n: int = 5) -> list[int]:
@@ -57,7 +85,6 @@ def recommend(req: func.HttpRequest) -> func.HttpResponse:
     """
     logging.info("Requête de recommandation reçue.")
 
-    # Récupération du user_id depuis les paramètres de la requête ou le body JSON
     user_id = req.params.get("user_id")
     if not user_id:
         try:
@@ -84,13 +111,8 @@ def recommend(req: func.HttpRequest) -> func.HttpResponse:
 
     recommendations = recommend_for_user(user_id)
 
-    response_body = {
-        "user_id": user_id,
-        "recommendations": recommendations
-    }
-
     return func.HttpResponse(
-        json.dumps(response_body),
+        json.dumps({"user_id": user_id, "recommendations": recommendations}),
         status_code=200,
         mimetype="application/json"
     )
