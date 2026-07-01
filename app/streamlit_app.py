@@ -7,7 +7,7 @@ import joblib
 import os
 
 # URL de l'Azure Function (locale pour le développement, Azure pour la production)
-AZURE_FUNCTION_URL = os.getenv("AZURE_FUNCTION_URL", "http://localhost:7071/api/recommend")
+AZURE_FUNCTION_URL = os.getenv("AZURE_FUNCTION_URL", "https://func-mycontent-reco.azurewebsites.net/api/recommend")
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "news-portal-user-interactions-by-globocom")
 ARTIFACTS_DIR = os.path.join(os.path.dirname(__file__), "..", "model_artifacts")
