@@ -8,3 +8,12 @@ model_artifacts/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+
+# Azurite (émulateur Azure Storage local)
+AzuriteConfig/
+__azurite_db_blob__.json
+__azurite_db_blob_extent__.json
+__azurite_db_queue__.json
+__azurite_db_queue_extent__.json
+__azurite_db_table__.json
+__blobstorage__/
