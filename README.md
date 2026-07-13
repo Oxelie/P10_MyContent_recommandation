@@ -104,15 +104,15 @@ Sauvegardés en local et uploadés sur **Azure Blob Storage** :
 curl "https://func-mycontent-reco.azurewebsites.net/api/recommend?user_id=<USER_ID>"
 ```
 **CAS Utilisateur avec historique**
-L'utilisateur fait partie de la matrice user_to_index.
-Réponse : liste de 5 `article_id` recommandés par le modèle ALS pour cet utlisateur.
+- L'utilisateur fait partie de la matrice user_to_index.
+- Réponse : liste de 5 `article_id` recommandés par le modèle ALS pour cet utlisateur.
 
 **CAS Utilisateur sans historique**
-L'utilisateur est fictif, il est créé pour les besoins de tests du fallback top-5 articles.
-Réponse : retour du fallback top-5 articles populaires.
+- L'utilisateur est fictif, il est créé pour les besoins de tests du fallback top-5 articles.
+- Réponse : retour du fallback top-5 articles populaires.
 
 **Affichage des résultats**
-Article ID - Catégorie ID - Nbre de mots - Date de publicaton
+- Article ID - Catégorie ID - Nbre de mots - Date de publicaton
 
 ### Gestion des crédits Azure
 
@@ -130,15 +130,22 @@ az functionapp stop --name func-mycontent-reco --resource-group rg-mycontent
 
 ## Lancer l'interface Streamlit
 
+L'application se connecte par défaut à l'Azure Function déployée.
+
 ```bash
-# Activer l'environnement
-conda activate env_p10_chantepie
+# Installer les dépendances
+pip install streamlit requests pandas joblib
 
 # Lancer l'application
 streamlit run app/streamlit_app.py
 ```
 
+**Note :** 
+*La Function App est mise en pause entre les sessions pour économiser les crédits Azure. Contacter la développeuse pour la réactiver avant une démonstration.*
+
+
 ---
+
 
 ## Branches Git
 
@@ -163,8 +170,27 @@ streamlit run app/streamlit_app.py
 
 ## Environnement Python
 
+Python 3.12. Dépendances listées dans `requirements.txt`.
+
 ```bash
-conda activate env_p10_chantepie  # Python 3.12
+pip install -r requirements.txt
 ```
 
-Dépendances principales : `implicit`, `scikit-learn`, `pandas`, `numpy`, `joblib`, `streamlit`, `azure-storage-blob`, `azure-functions`
+---
+
+## Développement local (Azurite)
+Pour tester sans consommer de crédits Azure, la branche dev utilise Azurite (émulateur Azure Storage local) 
+
+```bash
+# Terminal 1 — démarrer Azurite
+azurite --location AzuriteConfig
+
+# Terminal 2 — démarrer la Function en local
+cd azure_function
+source ../.venv/bin/activate
+func start
+
+# Terminal 3 — lancer Streamlit en pointant vers la Function locale
+AZURE_FUNCTION_URL=http://localhost:7071/api/recommend streamlit run app/streamlit_app.py
+```
+
