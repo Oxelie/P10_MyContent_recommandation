@@ -17,3 +17,7 @@ __azurite_db_queue__.json
 __azurite_db_queue_extent__.json
 __azurite_db_table__.json
 __blobstorage__/
+presentation/my_content_presentation_v3.html
+presentation/my_content_presentation.html
+presentation/my_content_presentation_v2.html
+AzuriteConfig
