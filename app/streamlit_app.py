@@ -7,21 +7,27 @@ import joblib
 import os
 
 # URL de l'Azure Function (locale pour le développement, Azure pour la production)
-AZURE_FUNCTION_URL = os.getenv("AZURE_FUNCTION_URL", "http://localhost:7071/api/recommend")
+AZURE_FUNCTION_URL = os.getenv("AZURE_FUNCTION_URL", "https://func-mycontent-reco.azurewebsites.net/api/recommend")
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "news-portal-user-interactions-by-globocom")
 ARTIFACTS_DIR = os.path.join(os.path.dirname(__file__), "..", "model_artifacts")
 
+FICTITIOUS_USER_ID = 999999
+
 
 @st.cache_data
-def load_user_ids() -> list[int]:
-    """Load a sample of user IDs from the clicks dataset.
+def load_user_data() -> tuple[list[int], dict[int, int]]:
+    """Load user IDs and their click counts from artifacts.
 
     Returns:
-        List of user IDs available for recommendation.
+        Tuple of (list of user_ids, dict of user_id → click count).
     """
     user_to_index = joblib.load(os.path.join(ARTIFACTS_DIR, "user_to_index.pkl"))
-    return sorted(list(user_to_index.keys()))[:200]
+    user_item_matrix = joblib.load(os.path.join(ARTIFACTS_DIR, "user_item_matrix.pkl"))
+    user_ids = sorted(list(user_to_index.keys()))[:200]
+    # ajout de la mention du nbre de clics pour chaque utilisateur dans le dictionnaire click_counts (pour affichage dans le selectbox)
+    click_counts = {uid: int(user_item_matrix[user_to_index[uid]].nnz) for uid in user_ids}
+    return user_ids, click_counts
 
 
 @st.cache_data
@@ -54,6 +60,22 @@ def get_recommendations(user_id: int) -> list[int] | None:
         return None
 
 
+def format_user_option(user_id: int, click_counts: dict[int, int]) -> str:
+    """Format a user ID for display in the selectbox.
+
+    Args:
+        user_id: The user identifier.
+        click_counts: Dict of user_id → click count.
+
+    Returns:
+        Formatted string for display.
+    """
+    if user_id == FICTITIOUS_USER_ID:
+        return "Nouvel utilisateur — 0 clic (fallback)"
+    count = click_counts.get(user_id, 0)
+    return f"Utilisateur n°{user_id} — {count} clic(s)"
+
+
 # ── Interface ──────────────────────────────────────────────────────────────────
 
 st.set_page_config(page_title="My Content — Recommandations", page_icon="📰", layout="centered")
@@ -64,13 +86,17 @@ st.markdown("Sélectionnez un utilisateur pour obtenir ses 5 articles recommand�
 
 st.divider()
 
-user_ids = load_user_ids()
+user_ids, click_counts = load_user_data()
 articles_metadata = load_articles_metadata()
 
+# Ajout de l'utilisateur fictif en tête de liste pour tester le fallback
+all_options = [FICTITIOUS_USER_ID] + user_ids
+
 selected_user_id = st.selectbox(
-    label="Identifiant utilisateur",
-    options=user_ids,
-    index=0
+    label="Identifiant utilisateur & historique en nombre de clics",
+    options=all_options,
+    index=0,
+    format_func=lambda uid: format_user_option(uid, click_counts)
 )
 
 if st.button("Obtenir les recommandations", type="primary"):
@@ -78,7 +104,12 @@ if st.button("Obtenir les recommandations", type="primary"):
         recommendations = get_recommendations(selected_user_id)
 
     if recommendations is not None:
-        st.success(f"Top 5 articles recommandés pour l'utilisateur **{selected_user_id}** :")
+        if selected_user_id == FICTITIOUS_USER_ID:
+            st.info("Utilisateur inconnu du modèle — affichage du **fallback : top 5 articles les plus populaires**")
+        else:
+            count = click_counts.get(selected_user_id, 0)
+            st.success(f"Top 5 articles recommandés pour l'utilisateur **{selected_user_id}** - Historique : {count} clic(s) :")
+
         for rank, article_id in enumerate(recommendations, start=1):
             if article_id in articles_metadata.index:
                 row = articles_metadata.loc[article_id]
