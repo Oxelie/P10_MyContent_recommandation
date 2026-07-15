@@ -320,35 +320,23 @@ app/
 ## Slide 20 — Annexe. Documentation
 
 ### Collaborative Filtering / ALS
-- https://github.com/benfred/implicit
-- "Collaborative Filtering for Implicit Feedback Datasets" (Hu, Koren, Volinsky 2008)
+- [github.com/benfred/implicit](https://github.com/benfred/implicit)
+- ["Collaborative Filtering for Implicit Feedback Datasets" — Hu, Koren, Volinsky 2008](https://ieeexplore.ieee.org/document/4781121)
 
 ### Collaborative Filtering / SVD
-- Recommender System made easy with Scikit-Surprise
+- [Recommender System made easy with Scikit-Surprise](https://surpriselib.com/)
 
 ### Content-Based / embeddings
-- Scikit-learn Décomposition PCA
-- Scikit-learn Similarité cosinus
+- [Scikit-learn — Décomposition PCA](https://scikit-learn.org/stable/modules/decomposition.html#pca)
+- [Scikit-learn — Similarité cosinus](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html)
 
 ### Azure Functions / Serverless
-- Bindings Blob Storage
-- Créer une application de fonction serverless avec Azure Fonctions
+- [Bindings Blob Storage](https://learn.microsoft.com/fr-fr/azure/azure-functions/functions-bindings-storage-blob)
+- [Créer une application de fonction serverless avec Azure Functions](https://learn.microsoft.com/fr-fr/azure/azure-functions/functions-create-function-app-portal)
 
 ### Évaluation — Hit Rate@K
-- Evaluating Recommender Systems - Metrics for evaluating Recommender Systems
-- Ranking Evaluation Metrics for Recommender Systems
+- [Evaluating Recommender Systems — Metrics for evaluating Recommender Systems](https://towardsdatascience.com/evaluating-recommender-systems-metrics-and-methodologies-9b9f4a7e58c4/)
+- [Ranking Evaluation Metrics for Recommender Systems](https://towardsdatascience.com/ranking-evaluation-metrics-for-recommender-systems-263d0a66ef54/)
 
 ---
 
-## Note méthodologique — Hit Rate@5 vs Precision@5
-
-Le protocole utilisé est un **leave-one-out** avec tri chronologique par `click_timestamp` : on masque le **dernier article lu chronologiquement** de chaque utilisateur test et on vérifie si cet article apparaît dans le Top 5 des recommandations.
-
-Ce protocole mesure un **Hit Rate@5** (aussi appelé Hit Ratio@5), pas une Precision@5 :
-
-| Métrique | Formule | Ce protocole |
-|----------|---------|--------------|
-| **Hit Rate@5** | hits / nb_utilisateurs (binaire par user) | ✅ Oui |
-| **Precision@5** | articles pertinents dans Top 5 / 5 (par liste) | ❌ Non |
-
-Référence : *"Ranking Evaluation Metrics for Recommender Systems"* — Towards Data Science
