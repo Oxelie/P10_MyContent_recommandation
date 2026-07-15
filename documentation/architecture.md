@@ -78,7 +78,7 @@ graph LR
 | `index_to_article.pkl` | Mapping index → article_id | 1 Mo |
 | `fallback_articles.pkl` | Top-5 articles populaires | 41 octets |
 
-**Total : 147,6 Mo** · Stockés sur Azure Blob Storage (`stmycontent2026/artifacts`)
+**Total : 119,1 Mo** · Stockés sur Azure Blob Storage (`stmycontent2026/artifacts`)
 
 ---
 
