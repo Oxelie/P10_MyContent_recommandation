@@ -1,7 +1,7 @@
 # Projet 10 — Système de recommandation d'articles — My Content
 
 Projet Master AI Engineer (CentraleSupelec / OpenClassrooms).  
-Développement d'un MVP de moteur de recommandation d'articles de presse pour la start-up **My Content**, avec déploiement serverless sur Azure.
+Développement d'un MVP de moteur de recommandation d'articles de presse, avec déploiement serverless sur Azure.
 
 ---
 
@@ -33,7 +33,7 @@ Les données ne contiennent que du **feedback implicite** (clics), sans notes ni
 - Embeddings pré-calculés (250 dimensions) réduits par **PCA à 50 dimensions** (94,53 % de variance conservée, gain mémoire −80 %)
 - Recommandation par **similarité cosinus** entre articles
 - Avantage : gère le cold-start article (embedding disponible dès la publication)
-- Precision@5 = **0,0040**
+- Hit Rate@5 = **0,0040**
 
 ### Collaborative Filtering — ALS (CF)
 - Algorithme **ALS** (Alternating Least Squares) via la librairie `implicit`
@@ -41,7 +41,7 @@ Les données ne contiennent que du **feedback implicite** (clics), sans notes ni
 - Factorise la matrice user × article en deux matrices de 50 facteurs latents :
   - `user_factors` : 322 897 × 50 (129,2 Mo)
   - `item_factors` : 46 033 × 50 (18,4 Mo)
-- Precision@5 = **0,1060** (×26 par rapport au CB)
+- Hit Rate@5 = **0,1060** (×26 par rapport au CB)
 
 **Choix retenu pour le MVP : CF (ALS)**
 
@@ -69,8 +69,15 @@ projet_10/
 ├── app/
 │   └── streamlit_app.py              # Interface utilisateur Streamlit
 │
-└── presentation/
-    └── my_content_presentation_v3.html  # Support de soutenance
+├── documentation/
+│   ├── architecture.md               # Schémas d'architecture (Mermaid)
+│   └── presentation_contenu.md       # Contenu des slides de soutenance
+│
+├── presentation/
+│   └── pres_projet_10.pdf            # Support de soutenance
+│
+├── requirements.txt                  # Dépendances app Streamlit uniquement
+└── requirements_notebooks.txt        # Dépendances notebooks & entraînement
 ```
 
 ---
@@ -160,23 +167,28 @@ streamlit run app/streamlit_app.py
 
 | Critère | Content-Based | Collaborative Filtering (ALS) |
 |---------|--------------|-------------------------------|
-| Precision@5 | 0,0040 | **0,1060** |
+| Hit Rate@5 | 0,0040 | **0,1060** |
 | Cold-start article | ✅ Géré | ❌ Non géré |
 | Cold-start utilisateur | Partiel | Fallback popularité |
-| Taille artifacts | 72,8 Mo | 147,6 Mo |
+| Taille artifacts | 72,8 Mo | 119,1 Mo |
 | Explicabilité | Variance PCA (94,53 %) | 50 facteurs latents |
 
 ---
 
 ## Environnement Python
 
-Python 3.12. Dépendances listées dans `requirements.txt`.
+Python 3.12. Deux fichiers de dépendances selon l'usage :
 
 ```bash
+# Pour lancer l'interface Streamlit uniquement
 pip install -r requirements.txt
+
+# Pour reproduire les notebooks et le script d'entraînement
+pip install -r requirements_notebooks.txt
 ```
 
 ---
+
 
 ## Développement local (Azurite)
 Pour tester sans consommer de crédits Azure, la branche dev utilise Azurite (émulateur Azure Storage local) 
@@ -186,11 +198,13 @@ Pour tester sans consommer de crédits Azure, la branche dev utilise Azurite (é
 azurite --location AzuriteConfig
 
 # Terminal 2 — démarrer la Function en local
-cd azure_function
+cd projet_10
 source ../.venv/bin/activate
+cd azure_function
 func start
 
 # Terminal 3 — lancer Streamlit en pointant vers la Function locale
 AZURE_FUNCTION_URL=http://localhost:7071/api/recommend streamlit run app/streamlit_app.py
 ```
+
 

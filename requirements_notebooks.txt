@@ -1,0 +1,25 @@
+# Dépendances pour reproduire les notebooks et le script d'entraînement
+# Testé avec Python 3.12 (environnement env_p10_chantepie)
+#
+# Installation :
+#   pip install -r requirements_notebooks.txt
+#
+# Lancer JupyterLab :
+#   jupyter lab
+
+# Données & calcul
+numpy==2.4.6
+pandas==3.0.3
+scipy==1.17.1
+
+# Machine Learning
+scikit-learn==1.9.0
+joblib==1.5.3
+implicit==0.7.3
+
+# Visualisation
+matplotlib==3.10.9
+
+# Environnement notebook
+jupyterlab==4.5.8
+ipykernel==7.2.0
