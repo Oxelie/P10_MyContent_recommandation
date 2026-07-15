@@ -9,6 +9,16 @@ Développement d'un MVP de moteur de recommandation d'articles de presse, avec d
 
 My Content est une application de lecture d'articles de presse. L'objectif du MVP est de proposer à chaque utilisateur 5 articles personnalisés en fonction de son historique de lecture, à partir de données de clics réelles (dataset Globocom).
 
+
+---
+
+## Branches Git
+
+| Branche | Usage |
+|---------|-------|
+| `main` | Production — connectée à Azure Blob Storage |
+| `dev` | Développement local — connectée à Azurite (émulateur Azure) |
+
 ---
 
 ## Données
@@ -147,17 +157,6 @@ streamlit run app/streamlit_app.py
 
 **Note :** 
 *La Function App est mise en pause entre les sessions pour économiser les crédits Azure. Contacter la développeuse pour la réactiver avant une démonstration.*
-
-
----
-
-
-## Branches Git
-
-| Branche | Usage |
-|---------|-------|
-| `main` | Production — connectée à Azure Blob Storage |
-| `dev` | Développement local — connectée à Azurite (émulateur Azure) |
 
 ---
 
