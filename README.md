@@ -170,7 +170,7 @@ streamlit run app/streamlit_app.py
 | Hit Rate@5 | 0,0040 | **0,1060** |
 | Cold-start article | ✅ Géré | ❌ Non géré |
 | Cold-start utilisateur | Partiel | Fallback popularité |
-| Taille artifacts | 72,8 Mo | 147,6 Mo |
+| Taille artifacts | 72,8 Mo | 119,1 Mo |
 | Explicabilité | Variance PCA (94,53 %) | 50 facteurs latents |
 
 ---
