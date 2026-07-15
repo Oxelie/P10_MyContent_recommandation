@@ -71,7 +71,7 @@ projet_10/
 │
 ├── documentation/
 │   ├── architecture.md               # Schémas d'architecture (Mermaid)
-│   └── contenu_presentation.md       # Contenu des slides de soutenance
+│   └── presentation_contenu.md       # Contenu des slides de soutenance
 │
 ├── presentation/
 │   └── pres_projet_10.pdf            # Support de soutenance
