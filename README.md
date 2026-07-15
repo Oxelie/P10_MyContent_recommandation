@@ -69,12 +69,10 @@ projet_10/
 ├── app/
 │   └── streamlit_app.py              # Interface utilisateur Streamlit
 │
-├── documentation/
+├── documentation_présentation/
 │   ├── architecture.md               # Schémas d'architecture (Mermaid)
-│   └── presentation_contenu.md       # Contenu des slides de soutenance
-│
-├── presentation/
-│   └── pres_projet_10.pdf            # Support de soutenance
+│   ├── presentation_contenu.md       # Contenu des slides de soutenance
+│   ├── pres_projet_10.pdf            # Support de soutenance (PDF)
 │
 ├── requirements.txt                  # Dépendances app Streamlit uniquement
 └── requirements_notebooks.txt        # Dépendances notebooks & entraînement
