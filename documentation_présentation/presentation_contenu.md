@@ -155,7 +155,7 @@ Stéphanie Duhem - Juillet 2026
 
 ---
 
-## Slide 10 — 04-A. Comparaison qualitative
+## Slide 10 — 04-B. Comparaison qualitative
 
 | Critères | Content-Based | Collaborative Filtering |
 |----------|---------------|------------------------|
