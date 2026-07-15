@@ -85,7 +85,14 @@ projet_10/
 │   ├── pres_projet_10.pdf            # Support de soutenance (PDF)
 │
 ├── requirements.txt                  # Dépendances app Streamlit uniquement
-└── requirements_notebooks.txt        # Dépendances notebooks & entraînement
+├── requirements_notebooks.txt        # Dépendances notebooks & entraînement
+│
+└── model_artifacts/                  # ⚠️ Non versionné (.gitignore) — stocké sur Azure Blob Storage
+    ├── als_model.pkl
+    ├── user_item_matrix.pkl
+    ├── user_to_index.pkl
+    ├── index_to_article.pkl
+    └── fallback_articles.pkl
 ```
 
 ---
