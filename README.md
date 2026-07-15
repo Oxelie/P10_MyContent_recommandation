@@ -74,7 +74,7 @@ projet_10/
 │   └── contenu_presentation.md       # Contenu des slides de soutenance
 │
 ├── presentation/
-│   └── pres_projet_10.pdf # Support de soutenance
+│   └── pres_projet_10.pdf            # Support de soutenance
 │
 ├── requirements.txt                  # Dépendances app Streamlit uniquement
 └── requirements_notebooks.txt        # Dépendances notebooks & entraînement
