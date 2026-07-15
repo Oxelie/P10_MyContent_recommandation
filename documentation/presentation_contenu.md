@@ -214,7 +214,7 @@ Stéphanie Duhem - Juillet 2026
 
 ## Slide 14 — 07. Démo avec interface Streamlit - suite
 
-*(captures d'écran de l'interface : dropdown utilisateurs, profil utilisateur n°122 avec 42 clics et catégories consultées, Top 5 recommandations)*
+*(captures d'écran de l'interface : affichage complet pour utilisateur fictif avec fallback, liste déroulante de sélection des utilisateurs, utilisateur n°122 avec son historique de 42 clics et les catégories consultées, et son Top 5 recommandations)*
 
 ---
 
