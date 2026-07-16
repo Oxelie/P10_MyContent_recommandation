@@ -58,11 +58,11 @@ Stéphanie Duhem - Juillet 2026
 
 | Stratégie | Principe | Exemple |
 |-----------|----------|---------|
-| **Content-Based Filtering** | Similarité entre items (contenu, embeddings) | Articles → similarité cosinus |
-| **Collaborative Filtering** | Comportements collectifs (qui a aimé quoi) | ALS, SVD, KNN sur matrice user × item |
+| **Content-Based Filtering** | Similarité entre items (contenu, embeddings) | Articles → similarité cosinus Linkedin (jobs) Pandora (Music) IMDb |
+| **Collaborative Filtering** | Comportements collectifs (qui a aimé quoi) | ALS, SVD, KNN sur matrice user × item Amazon (CF historique)|
 | **Hybride** | Combinaison de plusieurs signaux | Netflix, Spotify, YouTube |
-| **Popularité / Editorial** | Top articles, curation humaine | Fallback cold-start |
-| **Contextuel** | Heure, localisation, appareil, saisonnalité | Publicité ciblée, recherche locale |
+| **Popularité / Editorial** | Top articles, curation humaine | Fallback cold-start Reddit (tri par votes) App Store, Le Monde|
+| **Contextuel** | Heure, localisation, appareil, saisonnalité | Publicité ciblée, recherche locale Uber Eats, Booking.com |
 
 ### Exemple Netflix — stratégie multi-niveau
 - **Par région** : pondération différente selon les marchés (coréens → K-dramas, France → films d'auteur)
