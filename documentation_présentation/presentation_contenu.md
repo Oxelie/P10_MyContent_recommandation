@@ -52,7 +52,29 @@ Stéphanie Duhem - Juillet 2026
 
 ---
 
-## Slide 4 — 01-B. Deux approches de recommandation testées
+## Slide 4 — 01-B. Panorama des stratégies de recommandation
+
+### Les grandes familles de moteurs de recommandation
+
+| Stratégie | Principe | Exemple |
+|-----------|----------|---------|
+| **Content-Based Filtering** | Similarité entre items (contenu, embeddings) | Articles → similarité cosinus |
+| **Collaborative Filtering** | Comportements collectifs (qui a aimé quoi) | ALS, SVD, KNN sur matrice user × item |
+| **Hybride** | Combinaison de plusieurs signaux | Netflix, Spotify, YouTube |
+| **Popularité / Editorial** | Top articles, curation humaine | Fallback cold-start |
+| **Contextuel** | Heure, localisation, appareil, saisonnalité | Publicité ciblée, recherche locale |
+
+### Exemple Netflix — stratégie multi-niveau
+- **Par région** : pondération différente selon les marchés (coréens → K-dramas, France → films d'auteur)
+- **Par moment** : recommandations différentes le soir VS le week-end
+- **Par profil** : un même compte avec plusieurs profils → modèles séparés
+- **Hybridation** : CF (comportements) + CB (similarité de contenu) + éditorial (mise en avant de nouveautés)
+
+> My Content MVP : CB + CF testés, hybridation prévue dans l'architecture cible
+
+---
+
+## Slide 5 — 01-C. Deux approches de recommandation testées
 
 ### Content-Based Filtering
 - Recommander des **articles similaires** à ceux déjà lus
@@ -95,13 +117,13 @@ Stéphanie Duhem - Juillet 2026
 
 | Métrique | Valeur |
 |----------|--------|
-| Hit Rate@5 | **0.0040** |
+| Hit Rate@5 | **0,40 %** |
 | Temps d'évaluation | ~5 min |
 | Taille de l'artifact | 72.8 Mo |
 | Variance ACP conservée | 94,53 % |
 
 ### Analyse
-- Sur 500 utilisateurs testés, l'article masqué n'apparaît que très rarement dans le Top 5 : **0,4 %** des cas
+- Sur 500 utilisateurs testés, l'article masqué n'apparaît que très rarement dans le Top 5 : **0,40 %** des cas
 - La similarité cosinus capture la proximité sémantique mais pas les préférences individuelles
 - Deux articles de même catégorie peuvent être recommandés même si l'utilisateur ne les aurait pas choisis
 - Le leave-one-out est strict : un bon article recommandé qui n'est pas exactement l'article masqué n'est pas comptabilisé
@@ -132,13 +154,13 @@ Stéphanie Duhem - Juillet 2026
 
 | Métrique | Valeur |
 |----------|--------|
-| Hit Rate@5 | **0.1060** |
+| Hit Rate@5 | **10,60 %** |
 | Temps d'évaluation | ~355 min |
 | Taille totale des artifacts (sur disque) | 119.1 Mo |
 | Facteurs latents | 50 |
 
 ### Analyse
-- Sur 500 utilisateurs testés, l'article masqué apparaît dans le Top 5 dans **10,6 %** des cas
+- Sur 500 utilisateurs testés, l'article masqué apparaît dans le Top 5 dans **10,60 %** des cas
 - **26 fois plus performant** que le Content-Based sur ce jeu de données
 - **Temps d'évaluation long** (~355 min) : le leave-one-out nécessite un réentraînement partiel par utilisateur — acceptable pour l'évaluation mais non viable en production
 
@@ -148,7 +170,7 @@ Stéphanie Duhem - Juillet 2026
 
 | Critères | Content-Based | Collaborative Filtering |
 |----------|---------------|------------------------|
-| Hit Rate@5 | 0.0040 | **0.1060** |
+| Hit Rate@5 | 0,40 % | **10,60 %** |
 | Temps d'évaluation | ~5 min | ~355 min |
 | Taille des artifacts | 72.8 Mo | 119.1 Mo (disque) |
 | Explicabilité | 94.53 % de variance conservée ACP | 50 facteurs latents (boîte noire) |
@@ -171,7 +193,7 @@ Stéphanie Duhem - Juillet 2026
 ## Slide 11 — 05. Choix retenu & stratégie pour le MVP
 
 ### Modèle retenu : le Collaborative Filtering (ALS)
-- Hit Rate@5 **26 fois supérieure** au CB (0.1060 vs 0.0040) → la qualité de recommandation prime pour valider un MVP
+- Hit Rate@5 **26 fois supérieure** au CB (**10,60 %** vs 0,40 %) → la qualité de recommandation prime pour valider un MVP
 - Exploiter aux mieux les comportements collectifs de **322 897 utilisateurs**
 
 ### Les limites du CF sont connues et gérées
@@ -300,7 +322,7 @@ app/
 
 ### Réalisations du MVP
 - 2 approches testées et comparées (CB + CF)
-- CF (ALS) avec **Hit Rate@5 = 0.1060**
+- CF (ALS) avec **Hit Rate@5 = 10,60 %**
 - Azure Function déployée et opérationnelle
 - Interface Streamlit fonctionnelle
 - Fallback cold-start implémenté
@@ -317,7 +339,29 @@ app/
 
 ---
 
-## Slide 20 — Annexe. Documentation
+## Slide 20 — 13. Évolutions possibles du moteur de recommandation
+
+### Suivi de la diversité des recommandations
+- **Problème** : si un utilisateur reçoit toujours les mêmes 5 articles → signal d'appauvrissement du modèle ou d'un biais de renforcement, ‘bulle de filtre’ qui s’installe progressivement
+- **Solution** : tracer les recommandations produites par utilisateur et dans le temps → détecter les répétitions, mesurer la diversité (entropie, taux de renouvellement)
+
+### Adaptation au comportement de l'utilisateur face aux recommandations
+- **Signal implicite** : l'utilisateur clique-t-il sur les articles recommandés ? Les lit-il en entier ?
+- **Profil de curiosité** : certains utilisateurs cherchent à rester dans leur thème (bulle assumée), d'autres aiment découvrir — le modèle devrait s'adapter
+- **Levier** : ajuster la pondération diversité / pertinence selon le profil observé (ex. paramètre α sur la similarité cosinus ou bruit exploratoire sur l'ALS)
+
+### Prise en compte de la saisonnalité
+- **Exemples concrets** : Coupe du Monde → pic d'articles sportifs ; fêtes de fin d'année → actualités culturelles/économiques ; élections → articles politiques
+- **Risque sans gestion** : le modèle sur-recommande des articles populaires au moment de l'entraînement, même si la saison est passée
+- **Solutions** : pondérer les clics récents plus fortement (decay temporel), réentraîner plus fréquemment en période de pic, ou ajouter un signal calendaire explicite
+
+---
+
+## Slide 21 — Annexe. Documentation
+
+### Panorama des stratégies de recommandation
+- [Recommender Systems Handbook](https://www.researchgate.net/publication/227268858_Recommender_Systems_Handbook)
+- ["The Netflix Recommender System" — Gomez-Uribe, Hunt 2015](https://ailab-ua.github.io/courses/resources/netflix_recommender_system_tmis_2015.pdf)
 
 ### Collaborative Filtering / ALS
 - [github.com/benfred/implicit](https://github.com/benfred/implicit)
